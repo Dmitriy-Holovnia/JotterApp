@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainViewController: UIViewController {
+class MainViewController: UIViewController, AlertDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     
@@ -52,6 +52,10 @@ class MainViewController: UIViewController {
             }
         }
     }
+    
+    func onLabelTap(text: String) {
+        showAlertView(phone: text)
+    }
 }
 
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
@@ -63,6 +67,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: UserTableViewCell.id, for: indexPath) as! UserTableViewCell
         let result = results[indexPath.row]
         cell.configureCell(result)
+        cell.delegate = self
         return cell
     }
     
@@ -74,5 +79,10 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let result = results[indexPath.row]
+        let vc = DescriptionViewController(nibName: DescriptionViewController.nib,
+                                           bundle: nil)
+        vc.setupVC(result)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }

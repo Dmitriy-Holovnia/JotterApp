@@ -7,11 +7,16 @@
 
 import UIKit
 
+protocol AlertDelegate: class {
+    func onLabelTap(text: String)
+}
+
 class UserTableViewCell: UITableViewCell {
     
     static var id: String { String(describing: self) }
     static var nib: UINib { UINib(nibName: id, bundle: nil)}
     private var downloadTask: URLSessionDownloadTask?
+    weak var delegate: AlertDelegate?
     
     @IBOutlet weak var photoView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
@@ -43,5 +48,14 @@ class UserTableViewCell: UITableViewCell {
         photoIcon.image = UIImage(systemName: "phone.fill")
         photoView.contentMode = .scaleAspectFit
         photoView.clipsToBounds = true
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(makeCall))
+        phoneLabel.addGestureRecognizer(tapGesture)
+        phoneLabel.isUserInteractionEnabled = true
+    }
+    
+    @objc private func makeCall() {
+        guard let phone = phoneLabel.text else { return }
+        delegate?.onLabelTap(text: phone)
     }
 }
